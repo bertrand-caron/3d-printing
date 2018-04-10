@@ -1,6 +1,6 @@
 base_width = 36.0; // mm
 base_length = 80.0; // mm
-base_height = 10; // mm
+base_height = 8; // mm
 bracket_wall_width = 5.4; // mm
 bracket_height = 28.0; // mm
 bracket_triangular_brace_length = 35; // mm
