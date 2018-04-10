@@ -1,6 +1,6 @@
 base_width = 34.0; // mm
 base_length = 80.0; // mm
-base_height = 7; // mm
+base_height = 5; // mm
 bracket_wall_width = 4.0; // mm
 bracket_height = 28.0; // mm
 bracket_triangular_brace_length = 25; // mm
@@ -13,8 +13,8 @@ bracket_length = hole_diameter + 2 * hole_distance_to_wall; // mm
 inter_hole_distance = 26.0; // mm
 assert(base_width - 2 * bracket_wall_width >= inter_hole_distance);
 
-leg_radius = 13.8; // mm
-assert((bracket_height - hole_diameter) / 2 >= leg_radius);
+leg_length = 11.9 + hole_diameter / 2; // mm
+assert((bracket_height - hole_diameter) / 2 >= leg_length);
 
 bolt_distance = 34; // mm
 assert(base_width <= bolt_distance);
@@ -53,16 +53,22 @@ module bracket() {
     };
  };
 
+module leg_at_angle(angle){
+    translate([base_width / 2, bracket_length / 2, base_height + leg_length]){
+        rotate([-angle, 0, 0]){
+            translate([0, 0, -leg_length]){
+                cylinder(r=inter_hole_distance / 2, h=base_length);
+            };
+        };
+    };
+};
+
 module folded_leg(){
-    translate([base_width / 2, base_length, base_height + bracket_height / 2]){rotate([90, 0, 0]){cylinder(r=inter_hole_distance / 2, h=base_length);};};
+    leg_at_angle(90);
 };
 
 module extended_leg(){
-    translate([base_width / 2, bracket_length / 2, base_height + bracket_height / 2 - leg_radius]){cylinder(r=inter_hole_distance / 2, h=base_length);};
-};
-
-module leg_at_angle(angle){
-    translate([base_width / 2, base_length, base_height + bracket_height / 2]){rotate([angle, 0, 0]){cylinder(r=inter_hole_distance / 2, h=base_length);};};
+    leg_at_angle(0);
 };
 
 $fa = 1.0;
@@ -73,8 +79,11 @@ union(){
         folded_leg();
         extended_leg();
     };
-    color("green"){folded_leg();};
-    color("orange"){extended_leg();};
-    color("grey"){leg_at_angle(45);};
-    color("grey"){leg_at_angle(60);};
+    //color("green"){folded_leg();};
+    //color("orange"){extended_leg();};
+    //color("grey"){leg_at_angle(45);};
+    //color("grey"){leg_at_angle(0);};
+    //color("grey"){leg_at_angle(30);};
+    //color("grey"){leg_at_angle(60);};
+    //color("grey"){leg_at_angle(90);};
 };
