@@ -53,13 +53,22 @@ module bracket() {
     };
  };
  
+ 
+base_hole_diameter = 4.1; // mm
+base_hole_distance_to_edge = 10; //mm
+
+module base_hole(){
+    translate([base_width / 2, base_length - base_hole_distance_to_edge, 0]){cylinder(h=base_height, r=base_hole_diameter);};
+};
+ 
  module bracket_with_relieve_cuts(){
     color("red", alpha=1.0){
         difference(){
             bracket();
             folded_leg();
             extended_leg();
-            leg_path();       
+            leg_path();  
+            base_hole();
         };
     };
 };
@@ -95,6 +104,7 @@ module leg_path(){
 $fa = 1.0;
 $fs = 0.1;
 
+
 union(){
     bracket_with_relieve_cuts();
     //color("green", alpha=0.5){leg_path();};
@@ -105,4 +115,5 @@ union(){
     //color("grey"){leg_at_angle(30);};
     //color("grey"){leg_at_angle(60);};
     //color("grey"){leg_at_angle(90);};
+    
 };
