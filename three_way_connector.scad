@@ -6,10 +6,10 @@ rod_length = 50; // mm
 
 assert(connector_depth < connector_length);
 
-x_y_angle = 60; // deg
-x_z_angle = 60; // deg
+x_y_angle = 90; // deg
+x_z_angle = 90; // deg
 
-gusset_width = 1; // mm
+gusset_width = 2; // mm
 gusset_length_factor = 0.75; // percent
 
 outer_radius = rod_diameter / 2 + wall_width;
@@ -22,14 +22,16 @@ module x_y_gusset(){
 //    translate([wall_width, - connector_length, -gusset_width / 2]){
 //        cube([connector_length - wall_width, connector_length - wall_width, gusset_width]);
 //    };
-    translate([rod_plus_cylinder_depth, -rod_plus_cylinder_depth, 0]){
-        polygon(
-            points=[
-                [0, 0],
-                [0, -gusset_length],
-                [gusset_length * sin(x_y_angle), -gusset_length * cos(x_y_angle)],
-            ]
-        );
+    translate([rod_plus_cylinder_depth - wall_width, - (rod_plus_cylinder_depth - wall_width), -gusset_width / 2]){
+        linear_extrude(height=gusset_width){
+                polygon(
+                points=[
+                    [0, 0],
+                    [0, -gusset_length],
+                    [gusset_length * sin(x_y_angle), -gusset_length * cos(x_y_angle)],
+                ]
+            );
+        };
     };
 };
 
@@ -37,15 +39,17 @@ module x_z_gusset(){
 //    translate([wall_width, - connector_length, -gusset_width / 2]){
 //        cube([connector_length - wall_width, connector_length - wall_width, gusset_width]);
 //    };
-    translate([0, -rod_plus_cylinder_depth, rod_plus_cylinder_depth]){
+    translate([gusset_width / 2, -(rod_plus_cylinder_depth - wall_width), (rod_plus_cylinder_depth - wall_width)]){
         rotate([0, -90, 0]){
-            polygon(
-                points=[
-                    [0, 0],
-                    [0, -gusset_length],
-                    [gusset_length * sin(x_z_angle), -gusset_length * cos(x_z_angle)],
-                ]
-            );
+            linear_extrude(height=gusset_width){
+                polygon(
+                    points=[
+                        [0, 0],
+                        [0, -gusset_length],
+                        [gusset_length * sin(x_z_angle), -gusset_length * cos(x_z_angle)],
+                    ]
+                );
+            };
         };
     };
 };
