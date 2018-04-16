@@ -6,8 +6,8 @@ rod_length = 50; // mm
 
 assert(connector_depth < connector_length);
 
-x_y_angle = 90; // deg
-x_z_angle = 90; // deg
+x_y_angle = 45; // deg
+x_z_angle = 45; // deg
 
 gusset_width = 2; // mm
 gusset_length_factor = 0.75; // percent
@@ -62,11 +62,25 @@ module y_z_gusset(){
     };
 }
 
+module y_z_gusset_(){
+    polyhedron(
+        points=[
+            [0, 0, 0],
+            [0, -connector_length * cos(x_z_angle), connector_length * sin(x_z_angle)],
+            [connector_length * sin(x_y_angle), -connector_length * cos(x_y_angle), 0],
+        ],
+        faces=[
+            [0, 1, 2],
+        ]
+    );
+};
+
 module all_gussets(){
     union(){
         x_y_gusset();
         x_z_gusset();
-        y_z_gusset();
+        //y_z_gusset();
+        y_z_gusset_();
     };
 };
 
@@ -94,8 +108,8 @@ module all_rods(){
 
 $fa = 1.0;
 $fs = 0.1;
-
+y_z_gusset_();
 difference(){
     full_model();
-    all_rods();  
+    //all_rods();  
 };
