@@ -6,10 +6,10 @@ rod_length = 50; // mm
 
 assert(connector_depth < connector_length);
 
-x_y_angle = 45; // deg
-x_z_angle = 45; // deg
+x_y_angle = 90; // deg
+x_z_angle = 90; // deg
 
-gusset_width = 2; // mm
+gusset_width = 1.75; // mm
 gusset_length_factor = 0.75; // percent
 
 outer_radius = rod_diameter / 2 + wall_width;
@@ -57,10 +57,20 @@ module x_z_gusset(){
 module y_z_gusset(){
     translate([0, 0, 0]){
         rotate([0, 0, x_y_angle]){
-            x_z_gusset();
+            linear_extrude(height=gusset_width){
+                polygon(
+                    points=[
+                        [0, 0],
+                        [0, -gusset_length],
+                        [gusset_length * sin(x_z_angle), -gusset_length * cos(x_z_angle)],
+                    ]
+                );
+            };
         };
     };
 }
+
+root_gusset_width = gusset_width / sqrt(2);
 
 module y_z_gusset_(){
     polyhedron(
@@ -68,9 +78,16 @@ module y_z_gusset_(){
             [0, 0, 0],
             [0, -connector_length * cos(x_z_angle), connector_length * sin(x_z_angle)],
             [connector_length * sin(x_y_angle), -connector_length * cos(x_y_angle), 0],
+            [0 + root_gusset_width, + root_gusset_width, 0],
+            [0 + root_gusset_width, -connector_length * cos(x_z_angle) + root_gusset_width, connector_length * sin(x_z_angle)],
+            [connector_length * sin(x_y_angle) + root_gusset_width, -connector_length * cos(x_y_angle) + root_gusset_width, 0],
         ],
         faces=[
             [0, 1, 2],
+            [3, 4, 5],
+            [0, 1, 4, 3],
+            [0, 2, 3],
+            [1, 2, 5, 4],
         ]
     );
 };
@@ -79,7 +96,6 @@ module all_gussets(){
     union(){
         x_y_gusset();
         x_z_gusset();
-        //y_z_gusset();
         y_z_gusset_();
     };
 };
@@ -108,8 +124,8 @@ module all_rods(){
 
 $fa = 1.0;
 $fs = 0.1;
-y_z_gusset_();
+
 difference(){
     full_model();
-    //all_rods();  
+    all_rods();  
 };
