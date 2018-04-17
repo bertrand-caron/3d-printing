@@ -12,7 +12,7 @@ case_outside_width = case_inside_width + case_wall_width;
 case_outside_height = case_inside_height + case_wall_width;
 
 screw_internal_diameter = 1.5; // mm
-screw_hole_depth = 5; // mm
+screw_hole_depth = 5.0; // mm
 screw_head_diameter = 3.0; // mm
 screw_head_depth = 2.0; // mm
 
@@ -24,7 +24,7 @@ module case_outside(){
     cube([case_outside_length, case_outside_width, case_outside_height], center=true);
 };
 
-module pillar(){  
+module corner_pillar(){  
     difference(){
         cube([pillars_width, pillars_width, case_outside_height], center=true);
         color("red") translate([0, 0, screw_hole_depth / 2]) cylinder(r=screw_internal_diameter / 2, h=screw_hole_depth, center=true);
@@ -36,7 +36,7 @@ module screw_head(){
 }
 
 breathing_hole_diameter = 1.5; // mm
-breathing_hole_angle = 45; // deg, to Z
+breathing_hole_angle = 45.0; // deg, with respects to Z
 
 module breathing_holes(){
     for (delta_y=[-case_inside_width / 4, 0, case_inside_width / 4], x_sign=[-1, +1]){
@@ -47,7 +47,7 @@ module breathing_holes(){
 module corner_pillars(){
     for (x_sign=[-1, +1], y_sign=[-1, +1]){
         translate([x_sign * (case_inside_length / 2 - case_wall_width), y_sign * (case_inside_width / 2 - case_wall_width), 0]){
-            pillar();
+            corner_pillar();
         };
     };
 }
@@ -57,6 +57,24 @@ module screw_heads(){
         translate([x_sign * (case_inside_length / 2 - case_wall_width), y_sign * (case_inside_width / 2 - case_wall_width), case_outside_height / 2]){
             screw_head();
         };
+    };
+};
+
+BME280_length = 20.0; // mm
+BME280_interpillar_distance = 5.0; // mm
+BME280_screw_hole_diameter = 1.0; // mm
+BME280_screw_hole_depth = 5.0; // mm
+
+module BME280_pillar(){
+    difference(){
+        cylinder(r=BME280_screw_hole_diameter, h = BME280_screw_hole_depth + 1);
+        cylinder(r=BME280_screw_hole_diameter / 2, h = BME280_screw_hole_depth + 1);
+    };
+};
+
+module BME280_pillars(){
+    for (y_sign=[-1, +1]){
+        translate([-BME280_length / 2, y_sign * BME280_interpillar_distance / 2, - case_inside_height / 2]) BME280_pillar();
     };
 };
 
@@ -75,16 +93,21 @@ module full_case(){
 };
 
 module top_half_case(){
-    intersection(){
-        full_case();
-        translate([0, 0, 100 / 2]) cube([100, 100, 100], center=true);
+    union(){
+        intersection(){
+            full_case();
+            translate([0, 0, 100 / 2]) cube([100, 100, 100], center=true);
+        };
     };
 };
 
 module bottom_half_case(){
-    intersection(){
-        full_case();
-        translate([0, 0, -100 / 2]) cube([100, 100, 100], center=true);
+    union(){
+        intersection(){
+            full_case();
+            translate([0, 0, -100 / 2]) cube([100, 100, 100], center=true);
+        };
+        BME280_pillars();
     };
 };
 
