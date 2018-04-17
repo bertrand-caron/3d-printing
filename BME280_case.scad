@@ -78,6 +78,12 @@ module BME280_pillars(){
     };
 };
 
+cable_diameter = 3.0; // mm
+
+module cable_hole(){
+    translate([-case_inside_length / 2, 0, -case_inside_width / 10]) rotate([0, 90, 0]) cylinder(r=cable_diameter / 2, h=case_wall_width, center=true);
+};
+
 module full_case(){
     difference(){
         union(){
@@ -89,6 +95,7 @@ module full_case(){
         };
         screw_heads();
         breathing_holes();
+        cable_hole();
     };
 };
 
@@ -111,7 +118,7 @@ module bottom_half_case(){
     };
 };
 
-$fa = 0.1;
+$fa = 2;
 $fs = 0.1;
 
 union(){
