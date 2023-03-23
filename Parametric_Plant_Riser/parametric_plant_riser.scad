@@ -8,14 +8,19 @@ CIRCLE_HEIGHT = 12; // mm
 
 ARM_ANGLES = [0, 120, 240]; // in degrees
 ARM_HEIGHT = 6; // mm
-
-BASE_WIDTH = 2; // mm
 ARM_WIDTH = 2; // mm
 
-assert (CIRCLE_HEIGHT > ARM_HEIGHT, "Expected CIRCLE_HEIGHT to be strictly greater than ARM_HEIGHT");
+/* [Drainage channels] */
+// I recommend offsetting the channels from the arms to decrease the amount of overhand.
+CHANNEL_ANGLES = [60, 180, 300]; // in degrees
+DRAINAGE_CHANNEL_WIDTH_HEIGHT = 2; // mm
+
+/* [Rendering] */
 
 $fa = 1.0;
 $fs = 0.1;
+
+assert (CIRCLE_HEIGHT > ARM_HEIGHT, "Expected CIRCLE_HEIGHT to be strictly greater than ARM_HEIGHT");
 
 module hollow_cyclinder (outer_d=0, inner_d=0, h=0) {
     difference() {
@@ -42,9 +47,14 @@ module notched_cylinder(d) {
     difference() {
         hollow_cyclinder(outer_d=d, inner_d=d - 2 * CIRCLE_WIDTH, h=CIRCLE_HEIGHT);
         union() {
+            // Notch all cylinders above the arms
             for (angle_degree = ARM_ANGLES) {
-                color([1, 0, 0, 0.5]) translate([0, 0, CIRCLE_HEIGHT - (CIRCLE_HEIGHT - ARM_HEIGHT)]) arm(angle_degree=angle_degree, h=CIRCLE_HEIGHT);
-            }
+                translate([0, 0, CIRCLE_HEIGHT - (CIRCLE_HEIGHT - ARM_HEIGHT)]) arm(angle_degree=angle_degree, h=CIRCLE_HEIGHT);
+            };
+            // Add the drainage channels
+            for (angle_degree = CHANNEL_ANGLES) {
+                translate([0, 0, -(CIRCLE_HEIGHT - DRAINAGE_CHANNEL_WIDTH_HEIGHT) / 2]) arm(angle_degree=angle_degree, h=DRAINAGE_CHANNEL_WIDTH_HEIGHT);
+            };
         };
     };
 };
