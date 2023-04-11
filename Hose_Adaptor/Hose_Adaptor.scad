@@ -59,7 +59,7 @@ assert(Size_F_barb_count >= 1, "Error: Size_F_barb_count < 1");
 function size_bore(size, wall_thickness) = size - (wall_thickness * 2);
 
 // Manifold cube size (in mm) [X, Y, Z]
-MANIFOLD_CUBE_SIZE = [10, 20, 12.5];
+MANIFOLD_CUBE_SIZE = [10, 20, 15];
 
 // Directions for face A. Do not change unless you know what you are doing (and want connectors not aligned with cube faces).
 DIRECTION_A = [0, 90, 0];
