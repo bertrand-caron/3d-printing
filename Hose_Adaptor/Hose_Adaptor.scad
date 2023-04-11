@@ -113,17 +113,21 @@ union()
   rotate(DIRECTION_F) translate([0, 0, (MANIFOLD_CUBE_SIZE[2] / 2) - 0.5]) connector_size_F();
 }
 
-module connector(size, bore, barb_count) {
+module connector(size, bore, barb_count, barb_max_ratio = 1.25, barb_min_ratio = 1.00) {
   difference()
   {
+    // Sum of all barbs
+    // The total length of the connector is controlled by the number of barbs.
+    // The total length is: `size + (barb_count - 1) * size * 0.9`
     union()
     {
       for (i = [1:barb_count])
       {
-        translate([0, 0, (i - 1) * size * 0.9]) cylinder(h = size , r2 = size * 0.85 / 2, r1 = size * 1.16 / 2, $fa = 0.5, $fs = 0.5);
+        translate([0, 0, (i - 1) * size * 0.9]) cylinder(h = size , r2 = size * barb_min_ratio / 2, r1 = size * barb_max_ratio / 2, $fa = 0.5, $fs = 0.5);
 
       }
     }
+    // Minus the bore
     translate([0, 0, -0.1]) cylinder(h = size * barb_count , d = bore , $fa = 0.5, $fs = 0.5);
   }
 }
